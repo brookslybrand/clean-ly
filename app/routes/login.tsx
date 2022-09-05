@@ -1,18 +1,14 @@
-import React from "react";
-import type {
-  ActionFunction,
-  LoaderArgs,
-  MetaFunction,
-} from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import { verifyLogin } from "~/models/user.server";
-import { createUserSession, getUserId } from "~/session.server";
-import { validateEmail } from "~/utils";
+import React from 'react';
+import type { ActionFunction, LoaderArgs, MetaFunction } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
+import { Form, Link, useActionData, useSearchParams } from '@remix-run/react';
+import { verifyLogin } from '~/models/user.server';
+import { createUserSession, getUserId } from '~/session.server';
+import { validateEmail } from '~/utils';
 
 export const meta: MetaFunction = () => {
   return {
-    title: "Login",
+    title: 'Login',
   };
 };
 
@@ -25,31 +21,31 @@ interface ActionData {
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
-  if (userId) return redirect("/");
+  if (userId) return redirect('/');
   return json({});
-};
+}
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
-  const email = formData.get("email");
-  const password = formData.get("password");
-  const redirectTo = formData.get("redirectTo");
-  const remember = formData.get("remember");
+  const email = formData.get('email');
+  const password = formData.get('password');
+  const redirectTo = formData.get('redirectTo');
+  const remember = formData.get('remember');
 
   if (!validateEmail(email)) {
-    return json({ errors: { email: "Email is invalid." } }, { status: 400 });
+    return json({ errors: { email: 'Email is invalid.' } }, { status: 400 });
   }
 
-  if (typeof password !== "string") {
+  if (typeof password !== 'string') {
     return json(
-      { errors: { password: "Valid password is required." } },
+      { errors: { password: 'Valid password is required.' } },
       { status: 400 }
     );
   }
 
   if (password.length < 6) {
     return json(
-      { errors: { password: "Password is too short" } },
+      { errors: { password: 'Password is too short' } },
       { status: 400 }
     );
   }
@@ -58,7 +54,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   if (!user) {
     return json(
-      { errors: { email: "Invalid email or password" } },
+      { errors: { email: 'Invalid email or password' } },
       { status: 400 }
     );
   }
@@ -66,14 +62,14 @@ export const action: ActionFunction = async ({ request }) => {
   return createUserSession({
     request,
     userId: user.id,
-    remember: remember === "on" ? true : false,
-    redirectTo: typeof redirectTo === "string" ? redirectTo : "/notes",
+    remember: remember === 'on' ? true : false,
+    redirectTo: typeof redirectTo === 'string' ? redirectTo : '/notes',
   });
 };
 
 export default function Login() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") ?? "/notes";
+  const redirectTo = searchParams.get('redirectTo') ?? '/notes';
 
   const actionData = useActionData() as ActionData;
   const emailRef = React.useRef<HTMLInputElement>(null);
@@ -159,10 +155,10 @@ export default function Login() {
               </label>
             </div>
             <div className="text-center text-sm text-gray-500">
-              Don't have an account?{" "}
+              Don't have an account?{' '}
               <Link
                 className="text-blue-500 underline"
-                to={{ pathname: "/join" }}
+                to={{ pathname: '/join' }}
               >
                 Sign up
               </Link>

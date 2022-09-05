@@ -1,6 +1,6 @@
-import { useMemo } from "react";
-import { useMatches } from "@remix-run/react";
-import type { User } from "./models/user.server";
+import { useMemo } from 'react';
+import { useMatches } from '@remix-run/react';
+import type { User } from './models/user.server';
 
 export function useMatchesData(id: string) {
   const matchingRoutes = useMatches();
@@ -13,11 +13,11 @@ export function useMatchesData(id: string) {
 }
 
 export function isUser(user: User) {
-  return user && typeof user === "object";
+  return user && typeof user === 'object';
 }
 
 export function useOptionalUser() {
-  const data = useMatchesData("root");
+  const data = useMatchesData('root');
   if (!data || !isUser(data.user)) {
     return undefined;
   }
@@ -28,12 +28,12 @@ export function useUser() {
   const maybeUser = useOptionalUser();
   if (!maybeUser) {
     throw new Error(
-      "No user found in root loader, but user is required by useUser. If user is optional, try useOptionalUser instead."
+      'No user found in root loader, but user is required by useUser. If user is optional, try useOptionalUser instead.'
     );
   }
   return maybeUser;
 }
 
 export function validateEmail(email: unknown): email is string {
-  return typeof email === "string" && email.length > 3 && email.includes("@");
+  return typeof email === 'string' && email.length > 3 && email.includes('@');
 }

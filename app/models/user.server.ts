@@ -1,6 +1,5 @@
-import bcrypt from "bcryptjs";
-import { createClient } from "@supabase/supabase-js";
-import invariant from "tiny-invariant";
+import { createClient } from '@supabase/supabase-js';
+import invariant from 'tiny-invariant';
 
 export type User = { id: string; email: string };
 
@@ -10,11 +9,11 @@ const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
 invariant(
   supabaseUrl,
-  "SUPABASE_URL must be set in your environment variables."
+  'SUPABASE_URL must be set in your environment variables.'
 );
 invariant(
   supabaseAnonKey,
-  "SUPABASE_ANON_KEY must be set in your environment variables."
+  'SUPABASE_ANON_KEY must be set in your environment variables.'
 );
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -33,9 +32,9 @@ export async function createUser(email: string, password: string) {
 
 export async function getProfileById(id: string) {
   const { data, error } = await supabase
-    .from("profiles")
-    .select("email, id")
-    .eq("id", id)
+    .from('profiles')
+    .select('email, id')
+    .eq('id', id)
     .single();
 
   if (error) return null;
@@ -44,9 +43,9 @@ export async function getProfileById(id: string) {
 
 export async function getProfileByEmail(email?: string) {
   const { data, error } = await supabase
-    .from("profiles")
-    .select("email, id")
-    .eq("email", email)
+    .from('profiles')
+    .select('email, id')
+    .eq('email', email)
     .single();
 
   if (error) return null;

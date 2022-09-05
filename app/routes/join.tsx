@@ -1,18 +1,14 @@
-import type {
-  ActionFunction,
-  LoaderArgs,
-  MetaFunction,
-} from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
-import { createUserSession, getUserId } from "~/session.server";
-import { createUser, getProfileByEmail } from "~/models/user.server";
-import { validateEmail } from "~/utils";
-import * as React from "react";
+import type { ActionFunction, LoaderArgs, MetaFunction } from '@remix-run/node';
+import { json, redirect } from '@remix-run/node';
+import { Form, Link, useActionData, useSearchParams } from '@remix-run/react';
+import { createUserSession, getUserId } from '~/session.server';
+import { createUser, getProfileByEmail } from '~/models/user.server';
+import { validateEmail } from '~/utils';
+import * as React from 'react';
 
 export const meta: MetaFunction = () => {
   return {
-    title: "Sign Up",
+    title: 'Sign Up',
   };
 };
 
@@ -25,28 +21,28 @@ interface ActionData {
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request);
-  if (userId) return redirect("/");
+  if (userId) return redirect('/');
   return json({});
-};
+}
 
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
-  const email = formData.get("email");
-  const password = formData.get("password");
-  const redirectTo = formData.get("redirectTo");
+  const email = formData.get('email');
+  const password = formData.get('password');
+  const redirectTo = formData.get('redirectTo');
 
   // Ensure the email is valid
   if (!validateEmail(email)) {
     return json<ActionData>(
-      { errors: { email: "Email is invalid." } },
+      { errors: { email: 'Email is invalid.' } },
       { status: 400 }
     );
   }
 
   // What if a user sends us a password through other means than our form?
-  if (typeof password !== "string") {
+  if (typeof password !== 'string') {
     return json(
-      { errors: { password: "Valid password is required." } },
+      { errors: { password: 'Valid password is required.' } },
       { status: 400 }
     );
   }
@@ -54,7 +50,7 @@ export const action: ActionFunction = async ({ request }) => {
   // Enforce minimum password length
   if (password.length < 6) {
     return json<ActionData>(
-      { errors: { password: "Password is too short." } },
+      { errors: { password: 'Password is too short.' } },
       { status: 400 }
     );
   }
@@ -64,7 +60,7 @@ export const action: ActionFunction = async ({ request }) => {
   const existingUser = await getProfileByEmail(email);
   if (existingUser) {
     return json<ActionData>(
-      { errors: { email: "A user already exists with this email." } },
+      { errors: { email: 'A user already exists with this email.' } },
       { status: 400 }
     );
   }
@@ -75,13 +71,13 @@ export const action: ActionFunction = async ({ request }) => {
     request,
     userId: user.id,
     remember: false,
-    redirectTo: typeof redirectTo === "string" ? redirectTo : "/",
+    redirectTo: typeof redirectTo === 'string' ? redirectTo : '/',
   });
 };
 
 export default function Join() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") ?? undefined;
+  const redirectTo = searchParams.get('redirectTo') ?? undefined;
 
   const actionData = useActionData() as ActionData;
   const emailRef = React.useRef<HTMLInputElement>(null);
@@ -153,11 +149,11 @@ export default function Join() {
           <input type="hidden" name="redirectTo" value={redirectTo} />
           <div className="flex items-center justify-center">
             <div className="text-center text-sm text-gray-500">
-              Already have an account?{" "}
+              Already have an account?{' '}
               <Link
                 className="text-blue-500 underline"
                 to={{
-                  pathname: "/login",
+                  pathname: '/login',
                   search: searchParams.toString(),
                 }}
               >
