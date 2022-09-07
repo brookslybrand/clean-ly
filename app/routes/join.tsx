@@ -2,7 +2,7 @@ import type { ActionFunction, LoaderArgs, MetaFunction } from '@remix-run/node';
 import { json, redirect } from '@remix-run/node';
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react';
 import { createUserSession, getUserId } from '~/session.server';
-import { createUser, getProfileByEmail } from '~/models/user.server';
+import { createUser, getUserByEmail } from '~/models/user.server';
 import { validateEmail } from '~/utils';
 import * as React from 'react';
 
@@ -57,7 +57,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   // A user could potentially already exist within our system
   // and we should communicate that well
-  const existingUser = await getProfileByEmail(email);
+  const existingUser = await getUserByEmail(email);
   if (existingUser) {
     return json<ActionData>(
       { errors: { email: 'A user already exists with this email.' } },

@@ -69,7 +69,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Login() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get('redirectTo') ?? '/notes';
+  const redirectTo = searchParams.get('redirectTo') ?? '/';
 
   const actionData = useActionData() as ActionData;
   const emailRef = React.useRef<HTMLInputElement>(null);

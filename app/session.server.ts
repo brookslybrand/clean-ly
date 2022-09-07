@@ -1,6 +1,6 @@
 import { createCookieSessionStorage, redirect } from '@remix-run/node';
 import invariant from 'tiny-invariant';
-import { getProfileById } from './models/user.server';
+import { getUserById } from './models/user.server';
 
 invariant(
   process.env.SESSION_SECRET,
@@ -37,7 +37,7 @@ export async function getUser(request: Request) {
   const userId = await getUserId(request);
   if (userId === undefined) return null;
 
-  const user = await getProfileById(userId);
+  const user = await getUserById(userId);
   if (user) return user;
 
   throw await logout(request);
@@ -65,8 +65,8 @@ export async function requireUser(request: Request) {
   const userId = await requireUserId(request);
   if (userId == undefined) return null;
 
-  const profile = await getProfileById(userId);
-  if (profile) return profile;
+  const user = await getUserById(userId);
+  if (user) return user;
 
   throw await logout(request);
 }
@@ -97,6 +97,7 @@ export async function createUserSession({
 
 export async function logout(request: Request) {
   const session = await getSession(request);
+  console.log('logging out');
   return redirect('/', {
     headers: {
       'Set-Cookie': await sessionStorage.destroySession(session),

@@ -1,7 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import invariant from 'tiny-invariant';
 
-export type User = { id: string; email: string };
+import { prisma } from '~/db.server';
+
+export type { User } from '@prisma/client';
 
 // Abstract this away
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -16,40 +18,28 @@ invariant(
   'SUPABASE_ANON_KEY must be set in your environment variables.'
 );
 
+// TODO: Think about moving this and following a pattern like db.server.ts
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function createUser(email: string, password: string) {
+  // Create the user in "auth"
   const { user } = await supabase.auth.signUp({
     email,
     password,
   });
+  invariant(user !== null, 'Failed to create user');
 
-  // get the user profile after created
-  const profile = await getProfileByEmail(user?.email);
-
-  return profile;
+  // Create the user in the database
+  const dbUser = await prisma.user.create({ data: { id: user.id, email } });
+  return dbUser;
 }
 
-export async function getProfileById(id: string) {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('email, id')
-    .eq('id', id)
-    .single();
-
-  if (error) return null;
-  if (data) return { id: data.id, email: data.email };
+export async function getUserById(id: string) {
+  return await prisma.user.findUnique({ where: { id } });
 }
 
-export async function getProfileByEmail(email?: string) {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('email, id')
-    .eq('email', email)
-    .single();
-
-  if (error) return null;
-  if (data) return data;
+export async function getUserByEmail(email?: string) {
+  return await prisma.user.findUnique({ where: { email } });
 }
 
 export async function verifyLogin(email: string, password: string) {
@@ -59,7 +49,5 @@ export async function verifyLogin(email: string, password: string) {
   });
 
   if (error) return undefined;
-  const profile = await getProfileByEmail(user?.email);
-
-  return profile;
+  return await getUserByEmail(user?.email);
 }

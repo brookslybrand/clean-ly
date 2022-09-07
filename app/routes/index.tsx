@@ -4,6 +4,9 @@ import { clsx } from 'clsx';
 
 export default function Index() {
   const user = useOptionalUser();
+
+  console.log(user);
+
   return (
     <main className="min-h-screen bg-slate-100 py-24">
       <h1 className="w-full space-y-6 text-center">
@@ -16,12 +19,26 @@ export default function Index() {
       </h1>
       <div className="flex justify-center pt-20">
         {user ? (
-          <Link
-            to="/notes"
-            className="flex items-center justify-center rounded-md border border-transparent bg-white py-3 px-8 text-base font-medium text-violet-700 shadow-sm hover:bg-violet-50"
-          >
-            View Notes for {user.email}
-          </Link>
+          <div className="inline-grid grid-cols-2 gap-8 space-y-0">
+            <Link
+              to="/notes"
+              className={clsx(
+                linkBaseClassname,
+                'border border-transparent bg-white px-8 text-base font-medium text-gray-800 shadow-sm hover:border-gray-200 hover:bg-stone-200'
+              )}
+            >
+              View notes
+            </Link>
+            <Link
+              to="/logout"
+              className={clsx(
+                linkBaseClassname,
+                'bg-yellow-600  font-medium text-white hover:bg-yellow-800'
+              )}
+            >
+              Log out
+            </Link>
+          </div>
         ) : (
           <div className="inline-grid grid-cols-2 gap-8 space-y-0">
             <Link
