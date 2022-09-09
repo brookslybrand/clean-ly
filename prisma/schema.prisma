@@ -16,3 +16,23 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// A Chore is a description of the work that needs to be done
+model Chore {
+  id             String           @id @default(cuid())
+  name           String
+  description    String?
+  cadenceDays    Int
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  CompletedChore CompletedChore[]
+}
+
+// A CompletedChore is a completed instance of a Chore
+model CompletedChore {
+  id        String   @id @default(cuid())
+  chore     Chore    @relation(references: [id], fields: [choreId])
+  choreId   String
+  completed DateTime @default(now())
+  notes     String?
+}
