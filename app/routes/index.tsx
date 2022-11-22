@@ -19,7 +19,7 @@ export default function Index() {
           Cleanly
         </span>
         <span className="block text-4xl text-yellow-800 drop-shadow-sm">
-          Hello 👋🏼
+          Did this update?
         </span>
       </h1>
       <div className="flex justify-center pt-20">
