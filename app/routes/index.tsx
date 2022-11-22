@@ -2,10 +2,15 @@ import { Link } from '@remix-run/react';
 import { useOptionalUser } from '~/utils';
 import { clsx } from 'clsx';
 
+export function headers() {
+  return {
+    'X-Stretchy-Pants': 'its for fun',
+    'Cache-Control': 'max-age=300, s-maxage=3600',
+  };
+}
+
 export default function Index() {
   const user = useOptionalUser();
-
-  console.log(user);
 
   return (
     <main className="min-h-screen bg-slate-100 py-24">
@@ -14,7 +19,7 @@ export default function Index() {
           Cleanly
         </span>
         <span className="block text-4xl text-yellow-800 drop-shadow-sm">
-          keeping the Lybrand house clean
+          Hello 👋🏼
         </span>
       </h1>
       <div className="flex justify-center pt-20">
