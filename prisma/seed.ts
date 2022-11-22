@@ -8,28 +8,33 @@ async function seed() {
     createSeedData();
 
   // Cleanup database -- potentially need to make fault tolerant or more clear if something is messed
-
-  // Completed chores need to be deleted before chores, due to foreign key constraint
-  await prisma.completedChore.deleteMany({
-    where: { id: { in: completedChoreIds } },
-  });
-  await Promise.all([
-    prisma.user.delete({ where: { email } }).catch(() => {
-      // Okay if the user doesn't exist
-    }),
-    prisma.chore.deleteMany({
-      where: { id: { in: choreIds } },
-    }),
-  ]);
+  try {
+    // It's okay if these deletions fail, it's likely just because the data doesn't actually exist
+    const deleteCompletedChore = prisma.completedChore
+      .deleteMany({
+        where: { id: { in: completedChoreIds } },
+      })
+      .catch(() => {});
+    const deleteUser = prisma.user.delete({ where: { email } }).catch(() => {});
+    // Completed chores need to be deleted before chores, due to foreign key constraint
+    const deletedChore = prisma.chore
+      .deleteMany({
+        where: { id: { in: choreIds } },
+      })
+      .catch(() => {});
+    await Promise.all([deleteCompletedChore, deleteUser, deletedChore]);
+  } catch (error) {}
 
   // Create the seed data
-  await Promise.all([
-    prisma.user.create({ data: { email } }),
-    prisma.chore.createMany({ data: chores }),
-  ]);
+  const newUser = prisma.user.create({ data: { email } });
+  const newChores = chores.map((chore) => prisma.chore.create({ data: chore }));
+  await prisma.$transaction([newUser, ...newChores]);
 
   // Chores have to be created first, since completed chores have a foreign key dependency
-  await prisma.completedChore.createMany({ data: completedChores });
+  const newCompletedChores = completedChores.map((data) =>
+    prisma.completedChore.create({ data })
+  );
+  await prisma.$transaction(newCompletedChores);
 
   console.log(`Database has been seeded. 🌱`);
 }

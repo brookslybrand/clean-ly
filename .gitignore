@@ -1,11 +1,11 @@
 node_modules
-/.cache
-/netlify/functions/server/index.js
-/public/build
-/.netlify
 
-/.env
+/build
+/public/build
+.env
+
+/prisma/data.db
+/prisma/data.db-journal
 
 /app/styles/tailwind.css
 
-cypress/videos/
